@@ -1,8 +1,8 @@
 :root{
-  --bg:#f5f7ff;
+  --accent:#6366f1;
+  --bg:#f4f6ff;
   --card:#ffffff;
   --text:#111827;
-  --accent:#6366f1;
 }
 
 body.dark{
@@ -72,8 +72,8 @@ button{
   display:none;
   justify-content:center;
   align-items:center;
-  background:var(--bg);
   flex-direction:column;
+  background:var(--bg);
 }
 
 .spinner{
@@ -96,16 +96,16 @@ button{
   right:15px;
   font-size:20px;
   cursor:pointer;
-  background:var(--card);
   border:none;
   padding:10px;
   border-radius:10px;
+  background:var(--card);
 }
 
 #settingsPanel{
   position:fixed;
-  right:-300px;
   top:0;
+  right:-300px;
   width:260px;
   height:100%;
   background:var(--card);
@@ -118,7 +118,23 @@ button{
   right:0;
 }
 
-/* analog clock */
+/* clock */
+.clock{
+  margin-bottom:15px;
+}
+
+#time{
+  font-size:42px;
+  font-weight:700;
+}
+
+#date{
+  font-size:14px;
+  opacity:.7;
+  margin-top:5px;
+}
+
+/* analog */
 #analogClock{
   width:140px;
   height:140px;
