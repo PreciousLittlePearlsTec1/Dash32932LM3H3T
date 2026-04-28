@@ -1,12 +1,6 @@
+const $ = (id)=>document.getElementById(id);
 
-// =======================
-// SHORT SELECTOR
-// =======================
-const $ = (id) => document.getElementById(id);
-
-// =======================
-// ELEMENTS
-// =======================
+// ===== ELEMENTS =====
 const loader = $("loader");
 
 const input = $("searchInput");
@@ -22,190 +16,106 @@ const clockSelect = $("clockSelect");
 const timeEl = $("time");
 const dateEl = $("date");
 
-// =======================
-// STATE (saved settings)
-// =======================
-let state = JSON.parse(localStorage.getItem("dashboard_state")) || {
-  theme: "auto",
-  accent: "#6366f1",
-  clock: "digital"
+// ===== STATE =====
+let state = JSON.parse(localStorage.getItem("dash_state")) || {
+  theme:"auto",
+  accent:"#6366f1",
+  clock:"digital"
 };
 
-// =======================
-// SAVE SETTINGS
-// =======================
-function saveState() {
-  localStorage.setItem("dashboard_state", JSON.stringify(state));
+// ===== SAVE =====
+function save(){
+  localStorage.setItem("dash_state",JSON.stringify(state));
 }
 
-// =======================
-// SETTINGS TOGGLE
-// =======================
-function toggleSettings() {
-  panel.classList.toggle("open");
+// ===== SETTINGS =====
+settingsBtn.onclick=()=>panel.classList.toggle("open");
+
+// ===== THEME =====
+function applyTheme(){
+  document.documentElement.style.setProperty("--accent",state.accent);
+
+  let dark =
+    state.theme==="dark" ||
+    (state.theme==="auto" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+  document.body.classList.toggle("dark",dark);
 }
 
-// =======================
-// APPLY THEME
-// =======================
-function applyTheme() {
-  document.documentElement.style.setProperty("--accent", state.accent);
-
-  let isDark =
-    state.theme === "dark" ||
-    (state.theme === "auto" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-  document.body.classList.toggle("dark", isDark);
-}
-
-// =======================
-// CLOCK (DIGITAL)
-// =======================
-function updateDigitalClock() {
+// ===== CLOCK =====
+function updateClock(){
   const now = new Date();
 
-  timeEl.textContent = now.toLocaleTimeString("nl-NL", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
-  });
-
-  dateEl.textContent = now.toLocaleDateString("nl-NL", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric"
-  });
+  timeEl.textContent = now.toLocaleTimeString("nl-NL");
+  dateEl.textContent = now.toLocaleDateString("nl-NL",{weekday:"long",day:"numeric",month:"long"});
 }
 
-// =======================
-// CLOCK (ANALOG)
-// =======================
-function updateAnalogClock() {
-  const now = new Date();
+// analog
+function updateAnalog(){
+  const s=document.querySelector(".second");
+  const m=document.querySelector(".minute");
+  const h=document.querySelector(".hour");
 
-  const sec = now.getSeconds() * 6;
-  const min = now.getMinutes() * 6;
-  const hr = now.getHours() * 30 + min / 12;
+  if(!s||!m||!h) return;
 
-  const secondHand = document.querySelector(".second");
-  const minuteHand = document.querySelector(".minute");
-  const hourHand = document.querySelector(".hour");
+  const now=new Date();
 
-  if (secondHand) secondHand.style.transform = `translateX(-50%) rotate(${sec}deg)`;
-  if (minuteHand) minuteHand.style.transform = `translateX(-50%) rotate(${min}deg)`;
-  if (hourHand) hourHand.style.transform = `translateX(-50%) rotate(${hr}deg)`;
+  s.style.transform=`translateX(-50%) rotate(${now.getSeconds()*6}deg)`;
+  m.style.transform=`translateX(-50%) rotate(${now.getMinutes()*6}deg)`;
+  h.style.transform=`translateX(-50%) rotate(${now.getHours()*30}deg)`;
 }
 
-// =======================
-// APPLY CLOCK MODE
-// =======================
-function applyClockMode() {
-  const digital = $("digitalClock");
-  const analog = $("analogClock");
-
-  if (state.clock === "digital") {
-    digital.style.display = "block";
-    analog.style.display = "none";
-  } else {
-    digital.style.display = "none";
-    analog.style.display = "block";
-  }
+// ===== CLOCK MODE =====
+function applyClock(){
+  $("digitalClock").style.display = state.clock==="digital"?"block":"none";
+  $("analogClock").style.display = state.clock==="analog"?"block":"none";
 }
 
-// =======================
-// SEARCH LOGIC
-// =======================
-function isURL(text) {
-  return text.includes(".") && !text.includes(" ");
+// ===== SEARCH =====
+function isURL(t){
+  return t.includes(".") && !t.includes(" ");
 }
 
-function showLoader() {
-  loader.style.display = "flex";
-}
+function search(){
+  const q=input.value.trim();
+  if(!q) return;
 
-function search() {
-  const q = input.value.trim();
-  if (!q) return;
+  loader.style.display="flex";
 
-  showLoader();
-
-  setTimeout(() => {
-    if (isURL(q)) {
-      const url = q.startsWith("http") ? q : "https://" + q;
-      window.location.href = url;
-    } else {
-      window.location.href =
-        "https://www.google.com/search?q=" + encodeURIComponent(q);
+  setTimeout(()=>{
+    if(isURL(q)){
+      location.href = q.startsWith("http")?q:"https://"+q;
+    }else{
+      location.href="https://google.com/search?q="+encodeURIComponent(q);
     }
-  }, 900);
+  },900);
 }
 
-// =======================
-// SETTINGS EVENTS
-// =======================
-settingsBtn.addEventListener("click", toggleSettings);
+// ===== EVENTS =====
+btn.onclick=search;
+input.onkeydown=(e)=>e.key==="Enter"&&search();
 
-// theme
-themeSelect.onchange = (e) => {
-  state.theme = e.target.value;
-  saveState();
-  applyTheme();
-};
+// settings controls
+themeSelect.onchange=e=>{state.theme=e.target.value;save();applyTheme();};
+accentPicker.oninput=e=>{state.accent=e.target.value;save();applyTheme();};
+clockSelect.onchange=e=>{state.clock=e.target.value;save();applyClock();};
 
-// accent
-accentPicker.oninput = (e) => {
-  state.accent = e.target.value;
-  saveState();
-  applyTheme();
-};
-
-// clock mode
-clockSelect.onchange = (e) => {
-  state.clock = e.target.value;
-  saveState();
-  applyClockMode();
-};
-
-// =======================
-// KEYBOARD SHORTCUT
-// CTRL + SHIFT + V
-// =======================
-document.addEventListener("keydown", (e) => {
-  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "v") {
-    e.preventDefault();
-    toggleSettings();
-  }
-});
-
-// =======================
-// SEARCH EVENTS
-// =======================
-btn.addEventListener("click", search);
-
-input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") search();
-});
-
-// =======================
-// INIT
-// =======================
-function init() {
-  // restore UI values
-  themeSelect.value = state.theme;
-  accentPicker.value = state.accent;
-  clockSelect.value = state.clock;
+// ===== INIT =====
+function init(){
+  themeSelect.value=state.theme;
+  accentPicker.value=state.accent;
+  clockSelect.value=state.clock;
 
   applyTheme();
-  applyClockMode();
-  updateDigitalClock();
-  updateAnalogClock();
+  applyClock();
 
-  setInterval(() => {
-    updateDigitalClock();
-    updateAnalogClock();
-  }, 1000);
+  updateClock();
+  updateAnalog();
+
+  setInterval(()=>{
+    updateClock();
+    updateAnalog();
+  },1000);
 }
 
 init();
