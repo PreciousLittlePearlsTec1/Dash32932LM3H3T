@@ -1,14 +1,8 @@
 :root{
   --accent:#6366f1;
-  --bg:#f4f6ff;
+  --bg:#f5f7ff;
   --card:#ffffff;
   --text:#111827;
-}
-
-body.dark{
-  --bg:#0f172a;
-  --card:#111827;
-  --text:#f8fafc;
 }
 
 body{
@@ -22,7 +16,6 @@ body{
   height:100vh;
 }
 
-/* container */
 .container{
   width:420px;
   background:var(--card);
@@ -32,9 +25,19 @@ body{
   text-align:center;
 }
 
-/* title */
 h1{
   color:var(--accent);
+}
+
+/* clock */
+#time{
+  font-size:44px;
+  font-weight:700;
+}
+
+#date{
+  opacity:.7;
+  margin-top:5px;
 }
 
 /* search */
@@ -88,71 +91,3 @@ button{
 @keyframes spin{
   to{transform:rotate(360deg);}
 }
-
-/* settings */
-#settingsBtn{
-  position:fixed;
-  top:15px;
-  right:15px;
-  font-size:20px;
-  cursor:pointer;
-  border:none;
-  padding:10px;
-  border-radius:10px;
-  background:var(--card);
-}
-
-#settingsPanel{
-  position:fixed;
-  top:0;
-  right:-300px;
-  width:260px;
-  height:100%;
-  background:var(--card);
-  padding:20px;
-  transition:.3s;
-  box-shadow:-10px 0 40px rgba(0,0,0,.1);
-}
-
-#settingsPanel.open{
-  right:0;
-}
-
-/* clock */
-.clock{
-  margin-bottom:15px;
-}
-
-#time{
-  font-size:42px;
-  font-weight:700;
-}
-
-#date{
-  font-size:14px;
-  opacity:.7;
-  margin-top:5px;
-}
-
-/* analog */
-#analogClock{
-  width:140px;
-  height:140px;
-  border:6px solid var(--accent);
-  border-radius:50%;
-  margin:10px auto;
-  position:relative;
-  display:none;
-}
-
-.hand{
-  position:absolute;
-  bottom:50%;
-  left:50%;
-  transform-origin:bottom;
-  background:var(--accent);
-}
-
-.hour{width:5px;height:35px;}
-.minute{width:4px;height:50px;}
-.second{width:2px;height:60px;}
