@@ -1,0 +1,93 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+    height:100vh;
+    background: linear-gradient(120deg,#eef2ff,#f8fafc);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* Dashboard card */
+.container{
+    background:white;
+    padding:50px;
+    border-radius:20px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.1);
+    text-align:center;
+    width:450px;
+}
+
+h1{
+    margin-bottom:30px;
+    color:#4f46e5;
+}
+
+/* Search box */
+.searchBox{
+    display:flex;
+    gap:10px;
+}
+
+input{
+    flex:1;
+    padding:15px;
+    border-radius:12px;
+    border:1px solid #ddd;
+    font-size:16px;
+    outline:none;
+    transition:0.3s;
+}
+
+input:focus{
+    border-color:#4f46e5;
+    box-shadow:0 0 10px rgba(79,70,229,0.2);
+}
+
+button{
+    padding:15px 25px;
+    border:none;
+    background:#4f46e5;
+    color:white;
+    border-radius:12px;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#4338ca;
+}
+
+/* LOADING SCREEN */
+
+#loader{
+    position:fixed;
+    inset:0;
+    background:linear-gradient(120deg,#eef2ff,#f8fafc);
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+
+.spinner{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    border:8px solid #e0e7ff;
+    border-top:8px solid #4f46e5;
+    animation:spin 1s linear infinite;
+    margin-bottom:20px;
+}
+
+@keyframes spin{
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
+}
