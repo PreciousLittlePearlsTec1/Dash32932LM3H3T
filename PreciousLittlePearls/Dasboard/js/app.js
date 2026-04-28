@@ -1,7 +1,14 @@
-const $ = (id)=>document.getElementById(id);
 
-// ===== UI =====
+// =======================
+// SHORT SELECTOR
+// =======================
+const $ = (id) => document.getElementById(id);
+
+// =======================
+// ELEMENTS
+// =======================
 const loader = $("loader");
+
 const input = $("searchInput");
 const btn = $("searchBtn");
 
@@ -15,115 +22,190 @@ const clockSelect = $("clockSelect");
 const timeEl = $("time");
 const dateEl = $("date");
 
-// ===== STATE =====
-let state = JSON.parse(localStorage.getItem("dash_state")) || {
-  theme:"auto",
-  accent:"#6366f1",
-  clock:"digital"
+// =======================
+// STATE (saved settings)
+// =======================
+let state = JSON.parse(localStorage.getItem("dashboard_state")) || {
+  theme: "auto",
+  accent: "#6366f1",
+  clock: "digital"
 };
 
-// ===== SAVE =====
-function save(){
-  localStorage.setItem("dash_state",JSON.stringify(state));
+// =======================
+// SAVE SETTINGS
+// =======================
+function saveState() {
+  localStorage.setItem("dashboard_state", JSON.stringify(state));
 }
 
-// ===== THEME =====
-function applyTheme(){
-  document.documentElement.style.setProperty("--accent",state.accent);
-
-  let dark =
-    state.theme==="dark" ||
-    (state.theme==="auto" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-  document.body.classList.toggle("dark",dark);
+// =======================
+// SETTINGS TOGGLE
+// =======================
+function toggleSettings() {
+  panel.classList.toggle("open");
 }
 
-// ===== CLOCK =====
-function updateClock(){
+// =======================
+// APPLY THEME
+// =======================
+function applyTheme() {
+  document.documentElement.style.setProperty("--accent", state.accent);
+
+  let isDark =
+    state.theme === "dark" ||
+    (state.theme === "auto" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+  document.body.classList.toggle("dark", isDark);
+}
+
+// =======================
+// CLOCK (DIGITAL)
+// =======================
+function updateDigitalClock() {
   const now = new Date();
 
-  timeEl.textContent = now.toLocaleTimeString("nl-NL");
-  dateEl.textContent = now.toLocaleDateString("nl-NL",{weekday:"long",day:"numeric",month:"long"});
+  timeEl.textContent = now.toLocaleTimeString("nl-NL", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+
+  dateEl.textContent = now.toLocaleDateString("nl-NL", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
 }
 
-// analog clock
-function updateAnalog(){
+// =======================
+// CLOCK (ANALOG)
+// =======================
+function updateAnalogClock() {
   const now = new Date();
-  const s = now.getSeconds()*6;
-  const m = now.getMinutes()*6;
-  const h = now.getHours()*30;
 
-  document.querySelector(".second")?.style.setProperty("transform",`translateX(-50%) rotate(${s}deg)`);
-  document.querySelector(".minute")?.style.setProperty("transform",`translateX(-50%) rotate(${m}deg)`);
-  document.querySelector(".hour")?.style.setProperty("transform",`translateX(-50%) rotate(${h}deg)`);
+  const sec = now.getSeconds() * 6;
+  const min = now.getMinutes() * 6;
+  const hr = now.getHours() * 30 + min / 12;
+
+  const secondHand = document.querySelector(".second");
+  const minuteHand = document.querySelector(".minute");
+  const hourHand = document.querySelector(".hour");
+
+  if (secondHand) secondHand.style.transform = `translateX(-50%) rotate(${sec}deg)`;
+  if (minuteHand) minuteHand.style.transform = `translateX(-50%) rotate(${min}deg)`;
+  if (hourHand) hourHand.style.transform = `translateX(-50%) rotate(${hr}deg)`;
 }
 
-// ===== CLOCK MODE =====
-function applyClock(){
-  if(state.clock==="digital"){
-    $("digitalClock").style.display="block";
-    $("analogClock").style.display="none";
-  }else{
-    $("digitalClock").style.display="none";
-    $("analogClock").style.display="block";
+// =======================
+// APPLY CLOCK MODE
+// =======================
+function applyClockMode() {
+  const digital = $("digitalClock");
+  const analog = $("analogClock");
+
+  if (state.clock === "digital") {
+    digital.style.display = "block";
+    analog.style.display = "none";
+  } else {
+    digital.style.display = "none";
+    analog.style.display = "block";
   }
 }
 
-// ===== SEARCH =====
-function isURL(t){
-  return t.includes(".") && !t.includes(" ");
+// =======================
+// SEARCH LOGIC
+// =======================
+function isURL(text) {
+  return text.includes(".") && !text.includes(" ");
 }
 
-function search(){
-  let q = input.value.trim();
-  if(!q) return;
+function showLoader() {
+  loader.style.display = "flex";
+}
 
-  loader.style.display="flex";
+function search() {
+  const q = input.value.trim();
+  if (!q) return;
 
-  setTimeout(()=>{
-    if(isURL(q)){
-      if(!q.startsWith("http")) q="https://"+q;
-      location.href=q;
-    }else{
-      location.href="https://google.com/search?q="+encodeURIComponent(q);
+  showLoader();
+
+  setTimeout(() => {
+    if (isURL(q)) {
+      const url = q.startsWith("http") ? q : "https://" + q;
+      window.location.href = url;
+    } else {
+      window.location.href =
+        "https://www.google.com/search?q=" + encodeURIComponent(q);
     }
-  },900);
+  }, 900);
 }
 
-// ===== SETTINGS =====
-settingsBtn.onclick=()=>panel.classList.toggle("open");
+// =======================
+// SETTINGS EVENTS
+// =======================
+settingsBtn.addEventListener("click", toggleSettings);
 
-themeSelect.onchange=e=>{
-  state.theme=e.target.value;
-  save(); applyTheme();
+// theme
+themeSelect.onchange = (e) => {
+  state.theme = e.target.value;
+  saveState();
+  applyTheme();
 };
 
-accentPicker.oninput=e=>{
-  state.accent=e.target.value;
-  save(); applyTheme();
+// accent
+accentPicker.oninput = (e) => {
+  state.accent = e.target.value;
+  saveState();
+  applyTheme();
 };
 
-clockSelect.onchange=e=>{
-  state.clock=e.target.value;
-  save(); applyClock();
+// clock mode
+clockSelect.onchange = (e) => {
+  state.clock = e.target.value;
+  saveState();
+  applyClockMode();
 };
 
-// ===== EVENTS =====
-btn.onclick=search;
-input.addEventListener("keydown",e=>e.key==="Enter"&&search());
+// =======================
+// KEYBOARD SHORTCUT
+// CTRL + SHIFT + V
+// =======================
+document.addEventListener("keydown", (e) => {
+  if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "v") {
+    e.preventDefault();
+    toggleSettings();
+  }
+});
 
-// ===== INIT =====
-themeSelect.value=state.theme;
-accentPicker.value=state.accent;
-clockSelect.value=state.clock;
+// =======================
+// SEARCH EVENTS
+// =======================
+btn.addEventListener("click", search);
 
-applyTheme();
-applyClock();
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") search();
+});
 
-setInterval(()=>{
-  updateClock();
-  updateAnalog();
-},1000);
+// =======================
+// INIT
+// =======================
+function init() {
+  // restore UI values
+  themeSelect.value = state.theme;
+  accentPicker.value = state.accent;
+  clockSelect.value = state.clock;
 
-updateClock();
-updateAnalog();
+  applyTheme();
+  applyClockMode();
+  updateDigitalClock();
+  updateAnalogClock();
+
+  setInterval(() => {
+    updateDigitalClock();
+    updateAnalogClock();
+  }, 1000);
+}
+
+init();
