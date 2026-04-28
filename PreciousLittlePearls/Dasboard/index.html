@@ -14,54 +14,20 @@
   <p>Loading...</p>
 </div>
 
-<!-- SETTINGS BUTTON -->
-<button id="settingsBtn">⚙️</button>
-
-<!-- SETTINGS PANEL -->
-<aside id="settingsPanel">
-  <h2>Settings</h2>
-
-  <label>Theme</label>
-  <select id="themeSelect">
-    <option value="auto">Auto</option>
-    <option value="light">Light</option>
-    <option value="dark">Dark</option>
-  </select>
-
-  <label>Accent color</label>
-  <input type="color" id="accentPicker" />
-
-  <label>Clock type</label>
-  <select id="clockSelect">
-    <option value="digital">Digital</option>
-    <option value="analog">Analog</option>
-  </select>
-</aside>
-
 <!-- MAIN -->
 <main class="container">
 
   <h1>My Dashboard</h1>
 
   <!-- CLOCK -->
-  <section class="clock">
-
-    <div id="digitalClock">
-      <div id="time">00:00:00</div>
-      <div id="date">Loading...</div>
-    </div>
-
-    <div id="analogClock">
-      <div class="hand hour"></div>
-      <div class="hand minute"></div>
-      <div class="hand second"></div>
-    </div>
-
-  </section>
+  <div class="clock">
+    <div id="time">00:00:00</div>
+    <div id="date">Loading...</div>
+  </div>
 
   <!-- SEARCH -->
   <div class="searchBox">
-    <input id="searchInput" placeholder="Search or URL..." />
+    <input id="searchInput" placeholder="Search or type URL..." />
     <button id="searchBtn">Search</button>
   </div>
 
