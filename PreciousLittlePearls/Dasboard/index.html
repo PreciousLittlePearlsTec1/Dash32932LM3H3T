@@ -8,16 +8,16 @@
 
 <body>
 
-<!-- Loader -->
+<!-- LOADER -->
 <div id="loader">
   <div class="spinner"></div>
   <p>Loading...</p>
 </div>
 
-<!-- Settings button -->
+<!-- SETTINGS BUTTON -->
 <button id="settingsBtn">⚙️</button>
 
-<!-- Settings panel -->
+<!-- SETTINGS PANEL -->
 <aside id="settingsPanel">
   <h2>Settings</h2>
 
@@ -31,24 +31,24 @@
   <label>Accent color</label>
   <input type="color" id="accentPicker" />
 
-  <label>Clock style</label>
+  <label>Clock type</label>
   <select id="clockSelect">
     <option value="digital">Digital</option>
     <option value="analog">Analog</option>
   </select>
 </aside>
 
-<!-- Main UI -->
+<!-- MAIN -->
 <main class="container">
 
-  <h1>Dashboard</h1>
+  <h1>My Dashboard</h1>
 
-  <!-- Clock -->
+  <!-- CLOCK -->
   <section class="clock">
 
     <div id="digitalClock">
       <div id="time">00:00:00</div>
-      <div id="date">...</div>
+      <div id="date">Loading...</div>
     </div>
 
     <div id="analogClock">
@@ -59,11 +59,11 @@
 
   </section>
 
-  <!-- Search -->
-  <section class="searchBox">
-    <input id="searchInput" placeholder="Search or type URL..." />
+  <!-- SEARCH -->
+  <div class="searchBox">
+    <input id="searchInput" placeholder="Search or URL..." />
     <button id="searchBtn">Search</button>
-  </section>
+  </div>
 
 </main>
 
