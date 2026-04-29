@@ -1,45 +1,42 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard</title>
-
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
 
 <!-- Loading Screen -->
-<div id="loadingScreen">
-    <div class="loader"></div>
+<div id="loader" class="loader hidden">
+    <div class="spinner"></div>
     <p>Loading...</p>
 </div>
 
-<!-- Confirm Popup -->
-<div id="confirmPopup" class="hidden">
-    <div class="popupBox">
-        <h2>Leave dashboard?</h2>
+<!-- URL Confirm Popup -->
+<div id="popup" class="popup hidden">
+    <div class="popup-box">
+        <h2>Leaving dashboard</h2>
         <p id="popupText"></p>
-        <div class="popupButtons">
-            <button id="cancelBtn">No</button>
-            <button id="confirmBtn">Yes</button>
+        <div class="popup-buttons">
+            <button id="noBtn">No</button>
+            <button id="yesBtn">Yes</button>
         </div>
     </div>
 </div>
 
-<!-- Main -->
-<div class="container">
+<!-- Main Card -->
+<div class="card">
+    <h1>Dashboard</h1>
+    
+    <div id="clock" class="clock">00:00:00</div>
+    <div id="date" class="date">loading date...</div>
 
-    <h1 class="title">Dashboard</h1>
-
-    <div id="clock">00:00</div>
-
-    <div class="searchBox">
-        <input id="searchInput" type="text" placeholder="Search the web or type a URL...">
+    <div class="search-box">
+        <input id="searchInput" placeholder="Search or type URL">
         <button id="searchBtn">Search</button>
     </div>
-
 </div>
 
 <script src="./app.js"></script>
