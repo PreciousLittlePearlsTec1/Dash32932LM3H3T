@@ -1,168 +1,72 @@
-/* RESET */
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
+console.log("Clean app.js loaded");
+
+/* ELEMENTEN */
+const input = document.getElementById("searchInput");
+const btn = document.getElementById("searchBtn");
+const loader = document.getElementById("loader");
+const popup = document.getElementById("popup");
+const popupText = document.getElementById("popupText");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+
+let pendingURL = null;
+
+/* CLOCK */
+function updateClock(){
+    const now = new Date();
+    document.getElementById("clock").innerText =
+        now.toLocaleTimeString("nl-NL");
+
+    document.getElementById("date").innerText =
+        now.toLocaleDateString("nl-NL",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+}
+setInterval(updateClock,1000);
+updateClock();
+
+/* URL CHECK */
+function isURL(text){
+    const urlPattern = /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}/i;
+    return urlPattern.test(text);
 }
 
-body{
-    font-family: "Segoe UI", Arial, sans-serif;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:linear-gradient(135deg,#eef2ff,#f9fbff);
+/* LOADER */
+function showLoader(callback){
+    loader.classList.remove("hidden");
+    setTimeout(callback,1500);
 }
 
-/* ================= MAIN CARD ================= */
+/* SEARCH */
+function startSearch(){
+    const text = input.value.trim();
+    if(text === "") return;
 
-.card{
-    width:430px;
-    padding:40px;
-    border-radius:22px;
-    background:white;
-    box-shadow:0 25px 70px rgba(0,0,0,0.12);
-    text-align:center;
+    if(isURL(text)){
+        pendingURL = text.startsWith("http") ? text : "https://" + text;
+        popupText.innerText = "Do you really want to go to:\n" + text + " ?";
+        popup.classList.remove("hidden");
+        return;
+    }
+
+    showLoader(()=>{
+        window.location.href =
+        "https://www.google.com/search?q=" + encodeURIComponent(text);
+    });
 }
 
-h1{
-    color:#6366f1;
-    margin-bottom:15px;
-}
+/* POPUP BUTTONS */
+yesBtn.onclick = ()=>{
+    if(!pendingURL) return;
+    popup.classList.add("hidden");
+    showLoader(()=> window.location.href = pendingURL);
+};
 
-/* ================= CLOCK ================= */
+noBtn.onclick = ()=>{
+    popup.classList.add("hidden");
+    pendingURL = null;
+};
 
-.clock{
-    font-size:48px;
-    font-weight:600;
-    margin-bottom:5px;
-}
-
-.date{
-    color:#666;
-    margin-bottom:25px;
-}
-
-/* ================= SEARCH ================= */
-
-.search-box{
-    display:flex;
-    gap:12px;
-}
-
-.search-box input{
-    flex:1;
-    padding:13px 14px;
-    border-radius:12px;
-    border:1px solid #ddd;
-    font-size:16px;
-    transition:0.2s;
-}
-
-.search-box input:focus{
-    outline:none;
-    border-color:#6366f1;
-    box-shadow:0 0 0 3px rgba(99,102,241,0.15);
-}
-
-.search-box button{
-    background:#6366f1;
-    color:white;
-    border:none;
-    padding:13px 18px;
-    border-radius:12px;
-    font-size:16px;
-    cursor:pointer;
-    transition:0.2s;
-}
-
-.search-box button:hover{
-    transform:translateY(-1px);
-    box-shadow:0 8px 20px rgba(99,102,241,0.3);
-}
-
-/* ================= LOADING SCREEN ================= */
-
-.loader{
-    position:fixed;
-    inset:0;
-    background:white;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    z-index:999;
-}
-
-.spinner{
-    width:55px;
-    height:55px;
-    border-radius:50%;
-    border:6px solid #eee;
-    border-top:6px solid #6366f1;
-    animation:spin 1s linear infinite;
-    margin-bottom:15px;
-}
-
-@keyframes spin{
-    to{ transform:rotate(360deg); }
-}
-
-/* ================= POPUP ================= */
-
-.popup{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.35);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:998;
-}
-
-.popup-box{
-    width:360px;
-    background:white;
-    padding:30px;
-    border-radius:18px;
-    text-align:center;
-    box-shadow:0 20px 60px rgba(0,0,0,0.2);
-}
-
-.popup-box h2{
-    margin-bottom:10px;
-}
-
-.popup-box p{
-    color:#555;
-    white-space:pre-line;
-}
-
-.popup-buttons{
-    display:flex;
-    justify-content:center;
-    gap:15px;
-    margin-top:22px;
-}
-
-.popup-buttons button{
-    padding:11px 18px;
-    border:none;
-    border-radius:10px;
-    font-size:15px;
-    cursor:pointer;
-}
-
-#yesBtn{
-    background:#6366f1;
-    color:white;
-}
-
-#noBtn{
-    background:#e5e7eb;
-}
-
-/* ⚠️ SUPER BELANGRIJK FIX */
-.hidden{
-    display:none !important;
-}
+/* EVENTS */
+btn.onclick = startSearch;
+input.addEventListener("keydown", e=>{
+    if(e.key==="Enter") startSearch();
+});
