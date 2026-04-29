@@ -1,114 +1,168 @@
-console.log("APP STARTED");
-
-/* ELEMENTEN */
-const input = document.getElementById("searchInput");
-const btn = document.getElementById("searchBtn");
-const loader = document.getElementById("loader");
-const popup = document.getElementById("popup");
-const popupText = document.getElementById("popupText");
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
-
-console.log("Elements found:", {
-    input, btn, loader, popup, popupText, yesBtn, noBtn
-});
-
-let pendingURL = null;
-
-/* CLOCK */
-function updateClock(){
-    const now = new Date();
-    document.getElementById("clock").innerText =
-        now.toLocaleTimeString("nl-NL");
-    document.getElementById("date").innerText =
-        now.toLocaleDateString("nl-NL",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
-}
-setInterval(updateClock,1000);
-updateClock();
-
-/* HELPERS */
-function isURL(text){
-    const urlPattern = /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}/i;
-    const result = urlPattern.test(text);
-    console.log("isURL check:", text, "=>", result);
-    return result;
+/* RESET */
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
-function showLoader(callback){
-    console.log("SHOW LOADER");
-    loader.classList.remove("hidden");
-    setTimeout(()=>{
-        console.log("LOADER FINISHED");
-        callback();
-    },1500);
+body{
+    font-family: "Segoe UI", Arial, sans-serif;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#eef2ff,#f9fbff);
 }
 
-/* SEARCH FUNCTION */
-function startSearch(){
-    const text = input.value.trim();
-    console.log("SEARCH TRIGGERED:", text);
+/* ================= MAIN CARD ================= */
 
-    if(text === ""){
-        console.log("Nothing typed → abort");
-        return;
-    }
-
-    if(isURL(text)){
-        console.log("URL DETECTED");
-        pendingURL = text.startsWith("http") ? text : "https://" + text;
-
-        popupText.innerText =
-            "Do you really want to go to:\n" + text + " ?";
-        popup.classList.remove("hidden");
-        return;
-    }
-
-    console.log("GOOGLE SEARCH");
-    showLoader(()=>{
-        window.location.href =
-        "https://www.google.com/search?q=" + encodeURIComponent(text);
-    });
+.card{
+    width:430px;
+    padding:40px;
+    border-radius:22px;
+    background:white;
+    box-shadow:0 25px 70px rgba(0,0,0,0.12);
+    text-align:center;
 }
 
-/* POPUP BUTTONS */
-yesBtn.addEventListener("click", ()=>{
-    console.log("YES CLICKED", pendingURL);
+h1{
+    color:#6366f1;
+    margin-bottom:15px;
+}
 
-    if(!pendingURL){
-        console.log("No URL stored → abort");
-        return;
-    }
+/* ================= CLOCK ================= */
 
-    popup.classList.add("hidden");
+.clock{
+    font-size:48px;
+    font-weight:600;
+    margin-bottom:5px;
+}
 
-    showLoader(()=>{
-        window.location.href = pendingURL;
-    });
-});
+.date{
+    color:#666;
+    margin-bottom:25px;
+}
 
-noBtn.addEventListener("click", ()=>{
-    console.log("NO CLICKED");
-    popup.classList.add("hidden");
-    pendingURL = null;
-});
+/* ================= SEARCH ================= */
 
-/* EVENTS */
-btn.addEventListener("click", ()=>{
-    console.log("Search button clicked");
-    startSearch();
-});
+.search-box{
+    display:flex;
+    gap:12px;
+}
 
-input.addEventListener("keydown",(e)=>{
-    if(e.key === "Enter"){
-        console.log("ENTER pressed");
-        startSearch();
-    }
-});
+.search-box input{
+    flex:1;
+    padding:13px 14px;
+    border-radius:12px;
+    border:1px solid #ddd;
+    font-size:16px;
+    transition:0.2s;
+}
 
-/* EXTRA DEBUG — check of popup zichtbaar is bij start */
-window.addEventListener("load", ()=>{
-    console.log("WINDOW LOADED");
+.search-box input:focus{
+    outline:none;
+    border-color:#6366f1;
+    box-shadow:0 0 0 3px rgba(99,102,241,0.15);
+}
 
-    const popupVisible = !popup.classList.contains("hidden");
-    console.log("Popup visible at start:", popupVisible);
-});
+.search-box button{
+    background:#6366f1;
+    color:white;
+    border:none;
+    padding:13px 18px;
+    border-radius:12px;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.search-box button:hover{
+    transform:translateY(-1px);
+    box-shadow:0 8px 20px rgba(99,102,241,0.3);
+}
+
+/* ================= LOADING SCREEN ================= */
+
+.loader{
+    position:fixed;
+    inset:0;
+    background:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+
+.spinner{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    border:6px solid #eee;
+    border-top:6px solid #6366f1;
+    animation:spin 1s linear infinite;
+    margin-bottom:15px;
+}
+
+@keyframes spin{
+    to{ transform:rotate(360deg); }
+}
+
+/* ================= POPUP ================= */
+
+.popup{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.35);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:998;
+}
+
+.popup-box{
+    width:360px;
+    background:white;
+    padding:30px;
+    border-radius:18px;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.2);
+}
+
+.popup-box h2{
+    margin-bottom:10px;
+}
+
+.popup-box p{
+    color:#555;
+    white-space:pre-line;
+}
+
+.popup-buttons{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-top:22px;
+}
+
+.popup-buttons button{
+    padding:11px 18px;
+    border:none;
+    border-radius:10px;
+    font-size:15px;
+    cursor:pointer;
+}
+
+#yesBtn{
+    background:#6366f1;
+    color:white;
+}
+
+#noBtn{
+    background:#e5e7eb;
+}
+
+/* ⚠️ SUPER BELANGRIJK FIX */
+.hidden{
+    display:none !important;
+}
