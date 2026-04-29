@@ -1,29 +1,44 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Dashboard</title>
-  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
 
+<!-- LOADER -->
 <div id="loader">
   <div class="spinner"></div>
   <p>Loading...</p>
 </div>
 
+<!-- CONFIRM POPUP -->
+<div id="confirmOverlay">
+  <div class="confirmBox">
+    <h2>Leaving dashboard</h2>
+    <p id="confirmText"></p>
+
+    <div class="confirmButtons">
+      <button id="confirmNo" class="no">No</button>
+      <button id="confirmYes" class="yes">Yes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
 <main class="container">
 
   <h1>Dashboard</h1>
 
   <div class="clock">
-    <div id="time">00:00:00</div>
+    <div id="time">00:00</div>
     <div id="date">...</div>
   </div>
 
   <div class="searchBox">
-    <input id="searchInput" placeholder="Search or URL..." />
+    <input id="searchInput" placeholder="Search or type URL">
     <button id="searchBtn">Search</button>
   </div>
 
