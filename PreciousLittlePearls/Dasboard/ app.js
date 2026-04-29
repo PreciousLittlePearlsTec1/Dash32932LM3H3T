@@ -1,65 +1,64 @@
 const input = document.getElementById("searchInput");
-const searchBtn = document.getElementById("searchBtn");
-const loading = document.getElementById("loadingScreen");
+const btn = document.getElementById("searchBtn");
+const loader = document.getElementById("loader");
 
-const popup = document.getElementById("confirmPopup");
+const popup = document.getElementById("popup");
 const popupText = document.getElementById("popupText");
-const confirmBtn = document.getElementById("confirmBtn");
-const cancelBtn = document.getElementById("cancelBtn");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
 
-let pendingURL = null;
+let pendingURL = "";
 
 /* CLOCK */
 function updateClock(){
     const now = new Date();
-    const time = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    document.getElementById("clock").textContent = time;
+    document.getElementById("clock").innerText =
+        now.toLocaleTimeString("nl-NL");
+
+    document.getElementById("date").innerText =
+        now.toLocaleDateString("nl-NL",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
 }
 setInterval(updateClock,1000);
 updateClock();
 
-/* ENTER = SEARCH */
-input.addEventListener("keydown", e=>{
-    if(e.key === "Enter") startSearch();
-});
-searchBtn.addEventListener("click", startSearch);
-
-/* Detect URL */
+/* SEARCH */
 function isURL(text){
     return text.includes(".") && !text.includes(" ");
 }
 
-/* Loading screen */
-function showLoading(callback){
-    loading.classList.add("show");
+function showLoader(callback){
+    loader.classList.remove("hidden");
     setTimeout(callback,2000);
 }
 
-/* SEARCH FUNCTION */
-function startSearch(){
-    const text = input.value.trim();
+function doSearch(){
+    let text = input.value.trim();
     if(!text) return;
 
     if(isURL(text)){
         pendingURL = text.startsWith("http") ? text : "https://" + text;
-
-        popupText.textContent =
-        `You typed: "${text}"\nDo you really want to visit this site?`;
-
+        popupText.innerText = "Do you really want to go to:\n" + text + " ?";
         popup.classList.remove("hidden");
+        return;
     }
-    else{
-        const google = `https://www.google.com/search?q=${encodeURIComponent(text)}`;
-        showLoading(()=> window.location.href = google);
-    }
+
+    showLoader(()=>{
+        window.location.href =
+        "https://www.google.com/search?q=" + encodeURIComponent(text);
+    });
 }
 
-/* Popup buttons */
-confirmBtn.onclick = ()=>{
+/* POPUP */
+yesBtn.onclick = ()=>{
     popup.classList.add("hidden");
-    showLoading(()=> window.location.href = pendingURL);
+    showLoader(()=> window.location.href = pendingURL);
 };
 
-cancelBtn.onclick = ()=>{
+noBtn.onclick = ()=>{
     popup.classList.add("hidden");
 };
+
+btn.onclick = doSearch;
+input.addEventListener("keypress", e=>{
+    if(e.key==="Enter") doSearch();
+});
