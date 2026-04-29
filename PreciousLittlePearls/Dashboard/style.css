@@ -1,59 +1,68 @@
-body{
+*{
+    box-sizing:border-box;
     margin:0;
-    font-family:Segoe UI, Arial;
-    background:linear-gradient(135deg,#eef2ff,#f8fbff);
+    padding:0;
+}
+
+body{
+    font-family:Segoe UI, Arial, sans-serif;
     height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
+    background:linear-gradient(135deg,#eef2ff,#f8fbff);
 }
 
-/* Card */
+/* CARD */
 .card{
-    background:white;
+    width:430px;
     padding:40px;
-    border-radius:20px;
-    box-shadow:0 20px 60px rgba(0,0,0,0.1);
+    border-radius:22px;
+    background:white;
+    box-shadow:0 25px 70px rgba(0,0,0,0.12);
     text-align:center;
-    width:420px;
 }
 
 h1{
     color:#6366f1;
-    margin-bottom:10px;
+    margin-bottom:15px;
 }
 
-/* Clock */
 .clock{
     font-size:48px;
-    font-weight:bold;
-}
-.date{
-    margin-bottom:20px;
-    color:#666;
+    font-weight:600;
 }
 
-/* Search */
+.date{
+    color:#666;
+    margin-bottom:25px;
+}
+
+/* SEARCH */
 .search-box{
     display:flex;
-    gap:10px;
+    gap:12px;
 }
-input{
+
+.search-box input{
     flex:1;
-    padding:12px;
-    border-radius:10px;
+    padding:13px;
+    border-radius:12px;
     border:1px solid #ddd;
+    font-size:16px;
 }
-button{
+
+.search-box button{
     background:#6366f1;
     color:white;
     border:none;
-    padding:12px 18px;
-    border-radius:10px;
+    padding:13px 18px;
+    border-radius:12px;
+    font-size:16px;
     cursor:pointer;
 }
 
-/* Loader */
+/* LOADER */
 .loader{
     position:fixed;
     inset:0;
@@ -64,38 +73,63 @@ button{
     align-items:center;
     z-index:999;
 }
+
 .spinner{
-    width:50px;
-    height:50px;
+    width:55px;
+    height:55px;
+    border-radius:50%;
     border:6px solid #eee;
     border-top:6px solid #6366f1;
-    border-radius:50%;
     animation:spin 1s linear infinite;
+    margin-bottom:15px;
 }
-@keyframes spin{
-    to{transform:rotate(360deg);}
-}
-.hidden{ display:none; }
 
-/* Popup */
+@keyframes spin{
+    to{ transform:rotate(360deg); }
+}
+
+/* POPUP */
 .popup{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,0.4);
+    background:rgba(0,0,0,0.35);
     display:flex;
     justify-content:center;
     align-items:center;
     z-index:998;
 }
+
 .popup-box{
+    width:360px;
     background:white;
     padding:30px;
-    border-radius:16px;
+    border-radius:18px;
     text-align:center;
 }
+
 .popup-buttons{
-    margin-top:20px;
     display:flex;
-    gap:15px;
     justify-content:center;
+    gap:15px;
+    margin-top:20px;
+}
+
+#yesBtn{
+    background:#6366f1;
+    color:white;
+    padding:10px 18px;
+    border:none;
+    border-radius:10px;
+}
+
+#noBtn{
+    background:#e5e7eb;
+    padding:10px 18px;
+    border:none;
+    border-radius:10px;
+}
+
+/* SUPER IMPORTANT */
+.hidden{
+    display:none !important;
 }
