@@ -1,58 +1,89 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ========= ELEMENTS =========
   const loader = document.getElementById("loader");
   const input = document.getElementById("searchInput");
   const btn = document.getElementById("searchBtn");
   const timeEl = document.getElementById("time");
   const dateEl = document.getElementById("date");
 
-  // ========= CLOCK =========
-  function updateClock(){
-    const now = new Date();
+  const confirmOverlay = document.getElementById("confirmOverlay");
+  const confirmText = document.getElementById("confirmText");
+  const confirmYes = document.getElementById("confirmYes");
+  const confirmNo = document.getElementById("confirmNo");
 
-    timeEl.textContent = now.toLocaleTimeString("nl-NL", {
-      hour:"2-digit",
-      minute:"2-digit",
-      second:"2-digit"
-    });
+  let approvedSites = JSON.parse(localStorage.getItem("approvedSites")) || [];
 
-    dateEl.textContent = now.toLocaleDateString("nl-NL", {
-      weekday:"long",
-      day:"numeric",
-      month:"long",
-      year:"numeric"
-    });
+  function saveApproved(){
+    localStorage.setItem("approvedSites", JSON.stringify(approvedSites));
   }
 
-  setInterval(updateClock, 1000);
+  function showLoader(){ loader.style.display="flex"; }
+  function hideLoader(){ loader.style.display="none"; }
+
+  // CLOCK
+  function updateClock(){
+    const now=new Date();
+    timeEl.textContent=now.toLocaleTimeString("nl-NL",{hour:"2-digit",minute:"2-digit"});
+    dateEl.textContent=now.toLocaleDateString("nl-NL",{weekday:"long",day:"numeric",month:"long"});
+  }
+  setInterval(updateClock,1000);
   updateClock();
 
-  // ========= SEARCH =========
   function isURL(text){
     return text.includes(".") && !text.includes(" ");
   }
 
-  function search(){
-    const q = input.value.trim();
-    if(!q) return;
-
-    loader.style.display = "flex";
-
-    setTimeout(() => {
-      if(isURL(q)){
-        window.location.href = q.startsWith("http") ? q : "https://" + q;
-      } else {
-        window.location.href =
-          "https://www.google.com/search?q=" + encodeURIComponent(q);
-      }
-    }, 800);
+  function goToURL(url){
+    showLoader();
+    setTimeout(()=>window.location.href=url,700);
   }
 
-  btn.addEventListener("click", search);
+  function search(){
+    const typed=input.value.trim();
+    if(!typed) return;
 
-  input.addEventListener("keydown", (e) => {
-    if(e.key === "Enter") search();
+    // GOOGLE SEARCH
+    if(!isURL(typed)){
+      showLoader();
+      setTimeout(()=>{
+        window.location.href="https://www.google.com/search?q="+encodeURIComponent(typed);
+      },800);
+      return;
+    }
+
+    const url=typed.startsWith("http")?typed:"https://"+typed;
+
+    showLoader();
+
+    setTimeout(()=>{
+
+      if(approvedSites.includes(typed)){
+        goToURL(url);
+        return;
+      }
+
+      hideLoader();
+      confirmOverlay.style.display="flex";
+      confirmText.textContent=`Do you really want to go to:\n${typed}`;
+
+      confirmYes.onclick=()=>{
+        approvedSites.push(typed);
+        saveApproved();
+        confirmOverlay.style.display="none";
+        goToURL(url);
+      };
+
+      confirmNo.onclick=()=>{
+        confirmOverlay.style.display="none";
+        input.value="";
+      };
+
+    },800);
+  }
+
+  btn.addEventListener("click",search);
+  input.addEventListener("keydown",(e)=>{
+    if(e.key==="Enter") search();
   });
 
 });
